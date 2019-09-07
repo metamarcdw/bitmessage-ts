@@ -4,7 +4,6 @@ export interface IProtocolObject {
   head: null | number | IProtocolObject;
   body: number | string | Buffer |
     (number | string | Buffer | IProtocolObject)[];
-  length: number;
   serialize: () => Buffer;
 };
 

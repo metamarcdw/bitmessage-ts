@@ -3,6 +3,7 @@ import { IProtocolObject, IVarint, Varint } from './';
 export interface IVarstr extends IProtocolObject {
   head: IVarint;
   body: Buffer;
+  length: number;
   value: string;
 }
 

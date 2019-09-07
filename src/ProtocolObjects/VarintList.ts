@@ -3,6 +3,7 @@ import { IProtocolObject, IVarint, Varint } from './';
 export interface IVarintList extends IProtocolObject {
   head: IVarint;
   body: IVarint[];
+  length: number;
   value: bigint[];
 }
 
