@@ -11,10 +11,11 @@ export class Varstr implements IVarstr {
   public body: Buffer;
 
   constructor (str: string) {
-    if (str.length > Number.MAX_SAFE_INTEGER) {
-      throw new Error('This string is too large to be deserializable');
+    try {
+      this.head = new Varint(BigInt(str.length));
+    } catch (err) {
+      throw new RangeError('This string is too large');
     }
-    this.head = new Varint(BigInt(str.length));
     this.body = Buffer.from(str);
   }
 
@@ -38,10 +39,6 @@ export class Varstr implements IVarstr {
     }
     const strLength = Number((lengthVarint as IVarint).value);
     const stringBytes = moreBytes as Buffer;
-
-    if (strLength > Number.MAX_SAFE_INTEGER) {
-      throw new Error('This string is too large to be deserializable');
-    }
 
     const result: (IVarstr | Buffer)[] = [
       new Varstr(stringBytes.slice(0, strLength).toString())

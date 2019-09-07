@@ -11,10 +11,11 @@ export class VarintList implements IVarintList {
   public body: IVarint[];
 
   constructor (list: bigint[]) {
-    if (list.length > Number.MAX_SAFE_INTEGER) {
-      throw new Error('This list is too large to be deserializable');
+    try {
+      this.head = new Varint(BigInt(list.length));
+    } catch (err) {
+      throw new RangeError('This list is too large');
     }
-    this.head = new Varint(BigInt(list.length));
     this.body = list.map((item: bigint) => new Varint(item));
   }
 
@@ -44,10 +45,6 @@ export class VarintList implements IVarintList {
     }
     const listLength = Number((lengthVarint as IVarint).value);
     let listBytes = moreBytes as Buffer;
-
-    if (listLength > Number.MAX_SAFE_INTEGER) {
-      throw new Error('This list is too large to be deserializable');
-    }
 
     const list: bigint[] = [];
     for (let i = 0; i < listLength; i++) {

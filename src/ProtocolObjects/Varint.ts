@@ -30,7 +30,7 @@ export class Varint implements IVarint {
       this.body = Buffer.alloc(8);
       this.body.writeBigUInt64BE(num, 0);
     } else {
-      throw new Error('Number given exceeded MAX_VARINT');
+      throw new RangeError('Number given exceeded MAX_VARINT');
     }
   }
 
@@ -85,7 +85,7 @@ export class Varint implements IVarint {
       Varint.pushLeftovers(bytes, result, 9);
       return result;
     } else {
-      throw new Error('This should absolutely never happen');
+      throw new Error('FATAL: Error while deserializing Buffer');
     }
   }
 
