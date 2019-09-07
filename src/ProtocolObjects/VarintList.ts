@@ -39,6 +39,9 @@ export class VarintList implements IVarintList {
 
   public static deserialize (bytes: Buffer): (IVarintList | Buffer)[] {
     let [lengthVarint, moreBytes] = Varint.deserialize(bytes);
+    if (!moreBytes) {
+      throw new Error('Malformed VarintList');
+    }
     const listLength = Number((lengthVarint as IVarint).value);
     let listBytes = moreBytes as Buffer;
 
@@ -49,6 +52,9 @@ export class VarintList implements IVarintList {
     const list: bigint[] = [];
     for (let i = 0; i < listLength; i++) {
       let [varint, moreBytes] = Varint.deserialize(listBytes);
+      if (i !== listLength - 1 && !moreBytes) {
+        throw new Error('Malformed VarintList');
+      }
       list.push((varint as IVarint).value);
       listBytes = moreBytes as Buffer;
     }
@@ -56,7 +62,7 @@ export class VarintList implements IVarintList {
     const result: (IVarintList | Buffer)[] = [
       new VarintList(list)
     ];
-    if (listBytes.length > 0) {
+    if (listBytes && listBytes.length > 0) {
       result.push(listBytes);
     }
     return result;

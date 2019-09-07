@@ -33,6 +33,9 @@ export class Varstr implements IVarstr {
 
   public static deserialize (bytes: Buffer): (IVarstr | Buffer)[] {
     const [lengthVarint, moreBytes] = Varint.deserialize(bytes);
+    if (!moreBytes) {
+      throw new Error('Malformed Varstr');
+    }
     const strLength = Number((lengthVarint as IVarint).value);
     const stringBytes = moreBytes as Buffer;
 
