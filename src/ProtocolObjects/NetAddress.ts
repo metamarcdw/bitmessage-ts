@@ -21,9 +21,9 @@ export class IPAddress implements INetAddress {
     services: bigint,
     ip: string,
     port: number,
-    time?: bigint
+    time: bigint = BigInt(Date.now())
   ) {
-    this.time = time ? time : BigInt(Date.now());
+    this.time = time;
     this.stream = stream;
     this.services = services;
     this.ip = ip;
@@ -86,9 +86,9 @@ export class I2PAddress implements INetAddress {
     stream: number,
     services: bigint,
     destination: string,
-    time?: bigint
+    time: bigint = BigInt(Date.now())
   ) {
-    this.time = time ? time : BigInt(Date.now());
+    this.time = time;
     this.stream = stream;
     this.services = services;
     this.destination = destination;
