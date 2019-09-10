@@ -104,7 +104,7 @@ export class I2PAddress implements INetAddress {
 
   public static deserialize (bytes: Buffer): INetAddress {
     if (bytes.length !== 80) {
-      throw new Error('Malformed IPAddress');
+      throw new Error('Malformed I2PAddress');
     }
 
     const time: bigint = bytes.readBigUInt64BE();
