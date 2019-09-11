@@ -14,3 +14,4 @@ export { IVarint, Varint } from './Varint';
 export { IVarstr, Varstr } from './Varstr';
 export { IVarintList, VarintList } from './VarintList';
 export { INetAddress, IPAddress, I2PAddress } from './NetAddress';
+export { IInventoryVector, InventoryVector } from './InventoryVector';
