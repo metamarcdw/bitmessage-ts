@@ -57,7 +57,13 @@ export class IPAddress implements INetAddress {
 
   private static encodeIPv4 (ip: string): Buffer {
     const ipBytes = ip.split('.')
-      .map((strOctet: string): number => parseInt(strOctet))
+      .map((strOctet: string): number => {
+        const octet = parseInt(strOctet, 10);
+        if (octet < 0 || octet > 0xff) {
+          throw new Error('Malformed IPv4 Address');
+        }
+        return octet;
+      })
       .reduce((acc: Buffer, cur: number, index: number): Buffer => {
         acc.writeUInt8(cur, index);
         return acc;
@@ -70,7 +76,12 @@ export class IPAddress implements INetAddress {
 
   private static decodeIPv4(bytes: Buffer): string {
     return Array.from(bytes)
-      .map((octet: number): string => octet.toString(10))
+      .map((octet: number): string => {
+        if (octet < 0 || octet > 0xff) {
+          throw new Error('Malformed IPv4 Address');
+        }
+        return octet.toString(10);
+      })
       .join('.');
   }
 }
