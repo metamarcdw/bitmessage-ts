@@ -7,3 +7,11 @@ export function sha512(bytes: Buffer): Buffer {
 export function doubleSha512(bytes: Buffer): Buffer {
   return sha512(sha512(bytes));
 }
+
+export function ripeMd160(bytes: Buffer): Buffer {
+  return crypto.createHash('ripemd160').update(bytes).digest();
+}
+
+export function addressHash(bytes: Buffer): Buffer {
+  return ripeMd160(sha512(bytes));
+}
