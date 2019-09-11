@@ -109,7 +109,7 @@ export class I2PAddress implements INetAddress {
     const bytes = Buffer.alloc(20);
     bytes.writeBigUInt64BE(this.time);
     bytes.writeUInt32BE(this.stream, 8);
-    bytes.writeBigInt64BE(this.services, 12);
+    bytes.writeBigUInt64BE(this.services, 12);
     return Buffer.concat([bytes, Buffer.from(this.destination, 'ascii')]);
   }
 
