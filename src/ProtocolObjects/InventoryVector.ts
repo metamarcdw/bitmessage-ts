@@ -1,5 +1,5 @@
 import { ISerializable } from './';
-import { doubleSha512 } from '../util';
+import { doubleSha512 } from '../crypto';
 
 export interface IInventoryVector extends ISerializable {
   bmObject: ISerializable;

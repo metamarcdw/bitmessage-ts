@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 export function sha512(bytes: Buffer): Buffer {
   return crypto.createHash('sha512').update(bytes).digest();
