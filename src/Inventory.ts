@@ -3,11 +3,12 @@ import {
   AbstractOptions,
   AbstractGetOptions,
   AbstractBatch,
-  AbstractChainedBatch
+  AbstractChainedBatch,
+  AbstractLevelDOWN
 } from 'abstract-leveldown';
 
 export class Inventory<K = any, V = any> {
-  private db: level
+  private db: AbstractLevelDOWN<K, V>
 
   constructor () {
     this.db = level('inventory');
