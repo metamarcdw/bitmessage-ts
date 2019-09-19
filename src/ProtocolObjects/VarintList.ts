@@ -14,11 +14,7 @@ export class VarintList implements IVarintList {
   public static deserialize = VarintList.prototype.deserialize.bind(null);
 
   constructor (list: bigint[]) {
-    try {
-      this.head = new Varint(BigInt(list.length));
-    } catch (err) {
-      throw new RangeError('This list is too large');
-    }
+    this.head = new Varint(BigInt(list.length));
     this.body = list.map((item: bigint) => new Varint(item));
   }
 

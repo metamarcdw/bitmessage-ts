@@ -14,12 +14,8 @@ export class Varstr implements IVarstr {
   public static deserialize = Varstr.prototype.deserialize.bind(null);
 
   constructor (str: string) {
-    try {
-      this.head = new Varint(BigInt(str.length));
-    } catch (err) {
-      throw new RangeError('This string is too large');
-    }
-    this.body = Buffer.from(str);
+    this.head = new Varint(BigInt(str.length));
+    this.body = Buffer.from(str, 'ascii');
   }
 
   public get length (): number {
