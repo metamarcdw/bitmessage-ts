@@ -2,17 +2,17 @@ import { ISerializable } from './';
 import { doubleSha512 } from '../util/crypto';
 
 export interface IInventoryVector extends ISerializable {
-  bmObject: ISerializable;
+  sha512hash: Buffer;
 }
 
 export class InventoryVector implements IInventoryVector {
-  public bmObject: ISerializable;
+  public sha512hash: Buffer;
 
   constructor (bmObject: ISerializable) {
-    this.bmObject = bmObject;
+    this.sha512hash = doubleSha512(bmObject.serialize()).slice(0, 32);
   }
 
   public serialize (): Buffer {
-    return doubleSha512(this.bmObject.serialize()).slice(0, 32);
+    return this.sha512hash;
   }
 }
