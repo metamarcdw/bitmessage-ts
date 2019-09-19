@@ -85,11 +85,9 @@ export class Varint implements IVarint {
       } else if (firstByte === 0xff) {
         result.push(new Varint(bytes.readBigUInt64BE(1)));
         offset = 9;
-      } else {
-        throw new Error('FATAL: Error while deserializing Buffer');
       }
     } catch (err) {
-
+      throw new Error('Error while deserializing Buffer');
     }
 
     const leftovers = bytes.slice(offset);
