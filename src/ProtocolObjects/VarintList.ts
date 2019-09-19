@@ -11,6 +11,8 @@ export class VarintList implements IVarintList {
   public head: IVarint;
   public body: IVarint[];
 
+  public static deserialize = VarintList.prototype.deserialize.bind(null);
+
   constructor (list: bigint[]) {
     try {
       this.head = new Varint(BigInt(list.length));
@@ -39,7 +41,11 @@ export class VarintList implements IVarintList {
     return Buffer.concat([headBuffer, bodyBuffer], this.length);
   }
 
-  public static deserialize (bytes: Buffer): (IVarintList | Buffer)[] {
+  public deserialize (bytes: Buffer): (IVarintList | Buffer)[] {
+    if (this !== null) {
+      throw new Error('deserialize() should only be called as a static method');
+    }
+
     let [lengthVarint, moreBytes] = Varint.deserialize(bytes);
     if (!moreBytes) {
       throw new Error('Malformed VarintList');
@@ -60,9 +66,7 @@ export class VarintList implements IVarintList {
     const result: (IVarintList | Buffer)[] = [
       new VarintList(list)
     ];
-    if (listBytes && listBytes.length > 0) {
-      result.push(listBytes);
-    }
+    listBytes.length && result.push(listBytes);
     return result;
   }
 }

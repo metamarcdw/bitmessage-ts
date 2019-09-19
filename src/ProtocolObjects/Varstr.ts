@@ -11,6 +11,8 @@ export class Varstr implements IVarstr {
   public head: IVarint;
   public body: Buffer;
 
+  public static deserialize = Varstr.prototype.deserialize.bind(null);
+
   constructor (str: string) {
     try {
       this.head = new Varint(BigInt(str.length));
@@ -33,7 +35,11 @@ export class Varstr implements IVarstr {
     return Buffer.concat([headBuffer, this.body], this.length);
   }
 
-  public static deserialize (bytes: Buffer): (IVarstr | Buffer)[] {
+  public deserialize (bytes: Buffer): (IVarstr | Buffer)[] {
+    if (this !== null) {
+      throw new Error('deserialize() should only be called as a static method');
+    }
+
     const [lengthVarint, moreBytes] = Varint.deserialize(bytes);
     if (!moreBytes) {
       throw new Error('Malformed Varstr');
@@ -45,9 +51,7 @@ export class Varstr implements IVarstr {
       new Varstr(stringBytes.slice(0, strLength).toString())
     ];
     const leftovers = stringBytes.slice(strLength);
-    if (leftovers.length > 0) {
-      result.push(leftovers);
-    }
+    leftovers.length && result.push(leftovers);
     return result;
   }
 }

@@ -13,6 +13,8 @@ export class Varint implements IVarint {
   public head: number | null;
   public body: Buffer;
 
+  public static deserialize = Varint.prototype.deserialize.bind(null);
+
   constructor (num: bigint) {
     if (num < 0xfd) {
       this.head = null;
@@ -61,42 +63,37 @@ export class Varint implements IVarint {
     return Buffer.concat([headBuffer, this.body], this.length);
   }
 
-  public static deserialize (bytes: Buffer): (IVarint | Buffer)[] {
-    const firstByte = bytes[0];
-    if (firstByte < 0xfd) {
-      const result: IVarint[] = [new Varint(BigInt(firstByte))];
-      Varint.pushLeftovers(bytes, result, 1);
-      return result;
-    } else if (firstByte === 0xfd) {
-      const result: IVarint[] = [
-        new Varint(BigInt(bytes.readUInt16BE(1)))
-      ];
-      Varint.pushLeftovers(bytes, result, 3);
-      return result;
-    } else if (firstByte === 0xfe) {
-      const result: IVarint[] = [
-        new Varint(BigInt(bytes.readUInt32BE(1))),
-      ];
-      Varint.pushLeftovers(bytes, result, 5);
-      return result;
-    } else if (firstByte === 0xff) {
-      const result: IVarint[] = [
-        new Varint(bytes.readBigUInt64BE(1))
-      ];
-      Varint.pushLeftovers(bytes, result, 9);
-      return result;
-    } else {
-      throw new Error('FATAL: Error while deserializing Buffer');
+  public deserialize (bytes: Buffer): (IVarint | Buffer)[] {
+    if (this !== null) {
+      throw new Error('deserialize() should only be called as a static method');
     }
-  }
 
-  private static pushLeftovers (
-    bytes: Buffer,
-    result: (IVarint | Buffer)[],
-    offset: number ): void {
-    const leftovers = bytes.slice(offset);
-    if (leftovers.length > 0) {
-      result.push(leftovers);
+    const firstByte = bytes[0];
+    const result: (IVarint | Buffer)[] = [];
+    let offset: number = 0;
+
+    try {
+      if (firstByte < 0xfd) {
+        result.push(new Varint(BigInt(firstByte)));
+        offset = 1;
+      } else if (firstByte === 0xfd) {
+        result.push(new Varint(BigInt(bytes.readUInt16BE(1))));
+        offset = 3;
+      } else if (firstByte === 0xfe) {
+        result.push(new Varint(BigInt(bytes.readUInt32BE(1))));
+        offset = 5;
+      } else if (firstByte === 0xff) {
+        result.push(new Varint(bytes.readBigUInt64BE(1)));
+        offset = 9;
+      } else {
+        throw new Error('FATAL: Error while deserializing Buffer');
+      }
+    } catch (err) {
+
     }
+
+    const leftovers = bytes.slice(offset);
+    leftovers.length && result.push(leftovers);
+    return result;
   }
 }

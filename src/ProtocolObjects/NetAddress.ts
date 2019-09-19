@@ -1,6 +1,6 @@
-import { ISerializable } from './';
+import { ISerializable, IDeserializable } from './';
 
-export interface INetAddress extends ISerializable {
+export interface INetAddress extends ISerializable, IDeserializable {
   time: bigint;
   stream: number;
   services: bigint;
@@ -15,6 +15,8 @@ export class IPAddress implements INetAddress {
   public services: bigint;
   public ip: string;
   public port: number;
+
+  public static deserialize = IPAddress.prototype.deserialize.bind(null);
 
   constructor (
     stream: number,
@@ -41,18 +43,28 @@ export class IPAddress implements INetAddress {
     return Buffer.concat([bytes, IPAddress.encodeIPv4(this.ip), portBytes]);
   }
 
-  public static deserialize (bytes: Buffer): INetAddress {
-    if (bytes.length !== 38) {
+  public deserialize (bytes: Buffer): (INetAddress | Buffer)[] {
+    if (this !== null) {
+      throw new Error('deserialize() should only be called as a static method');
+    }
+    if (bytes.length < 38) {
       throw new Error('Malformed IPAddress');
     }
+
+    const leftovers = bytes.slice(80);
+    bytes = bytes.slice(0, 80);
 
     const time: bigint = bytes.readBigUInt64BE();
     const stream: number = bytes.readUInt32BE(8);
     const services: bigint = bytes.readBigUInt64BE(12);
-    const ip: string = this.decodeIPv4(bytes.slice(32, 36))
-
+    const ip: string = IPAddress.decodeIPv4(bytes.slice(32, 36))
     const port: number =  bytes.readUInt16BE(36);
-    return new IPAddress(stream, services, ip, port, time);
+
+    const result: (INetAddress | Buffer)[] = [
+      new IPAddress(stream, services, ip, port, time)
+    ];
+    leftovers.length && result.push(leftovers);
+    return result;
   }
 
   private static encodeIPv4 (ip: string): Buffer {
@@ -93,6 +105,8 @@ export class I2PAddress implements INetAddress {
   public destination: string;
   // bmmkyafw6os62qd7g6rhmuewgnbrcaa3eykyrnjyggjgzoo3gb7q.b32.i2p
 
+  public static deserialize = I2PAddress.prototype.deserialize.bind(null);
+
   constructor (
     stream: number,
     services: bigint,
@@ -113,16 +127,26 @@ export class I2PAddress implements INetAddress {
     return Buffer.concat([bytes, Buffer.from(this.destination, 'ascii')]);
   }
 
-  public static deserialize (bytes: Buffer): INetAddress {
-    if (bytes.length !== 80) {
+  public deserialize (bytes: Buffer): (INetAddress | Buffer)[] {
+    if (this !== null) {
+      throw new Error('deserialize() should only be called as a static method');
+    }
+    if (bytes.length < 80) {
       throw new Error('Malformed I2PAddress');
     }
+
+    const leftovers = bytes.slice(80);
+    bytes = bytes.slice(0, 80);
 
     const time: bigint = bytes.readBigUInt64BE();
     const stream: number = bytes.readUInt32BE(8);
     const services: bigint = bytes.readBigUInt64BE(12);
     const destination: string = bytes.slice(20).toString('ascii');
 
-    return new I2PAddress(stream, services, destination, time);
+    const result: (INetAddress | Buffer)[] = [
+      new I2PAddress(stream, services, destination, time)
+    ];
+    leftovers.length && result.push(leftovers);
+    return result;
   }
 }

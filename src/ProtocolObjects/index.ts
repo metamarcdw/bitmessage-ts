@@ -4,7 +4,11 @@ export interface ISerializable {
   serialize: () => Buffer;
 }
 
-export interface IProtocolObject extends ISerializable {
+export interface IDeserializable {
+  deserialize: (bytes: Buffer) => (ISerializable | Buffer)[];
+}
+
+export interface IProtocolObject extends ISerializable, IDeserializable {
   head: null | number | IProtocolObject;
   body: number | string | Buffer |
     (number | string | Buffer | IProtocolObject)[];
