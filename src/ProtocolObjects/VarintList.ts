@@ -36,7 +36,7 @@ export class VarintList implements IVarintList {
   public serialize (): Buffer {
     const headBuffer = this.head.serialize();
     const bodyBuffer = this.body.reduce((acc: Buffer, cur: IVarint) => {
-        return Buffer.concat([acc, cur.serialize()]);
+        return Buffer.concat([acc, cur.serialize()], acc.length + cur.length);
     }, Buffer.alloc(0));
     return Buffer.concat([headBuffer, bodyBuffer], this.length);
   }

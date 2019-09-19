@@ -40,7 +40,7 @@ export class IPAddress implements INetAddress {
 
     const portBytes = Buffer.alloc(2);
     portBytes.writeUInt16BE(this.port, 0);
-    return Buffer.concat([bytes, IPAddress.encodeIPv4(this.ip), portBytes]);
+    return Buffer.concat([bytes, IPAddress.encodeIPv4(this.ip), portBytes], 38);
   }
 
   public deserialize (bytes: Buffer): (INetAddress | Buffer)[] {
@@ -83,7 +83,7 @@ export class IPAddress implements INetAddress {
 
     const prefix = Buffer.alloc(12);
     prefix.writeUInt16BE(0xffff, 10);
-    return Buffer.concat([prefix, ipBytes]);
+    return Buffer.concat([prefix, ipBytes], 16);
   }
 
   private static decodeIPv4(bytes: Buffer): string {
@@ -124,7 +124,7 @@ export class I2PAddress implements INetAddress {
     bytes.writeBigUInt64BE(this.time);
     bytes.writeUInt32BE(this.stream, 8);
     bytes.writeBigUInt64BE(this.services, 12);
-    return Buffer.concat([bytes, Buffer.from(this.destination, 'ascii')]);
+    return Buffer.concat([bytes, Buffer.from(this.destination, 'ascii')], 80);
   }
 
   public deserialize (bytes: Buffer): (INetAddress | Buffer)[] {
