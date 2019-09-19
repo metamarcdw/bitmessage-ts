@@ -23,7 +23,7 @@ export class Varstr implements IVarstr {
   }
 
   public get value (): string {
-    return this.body.toString();
+    return this.body.toString('ascii');
   }
 
   public serialize (): Buffer {
