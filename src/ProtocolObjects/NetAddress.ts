@@ -31,16 +31,13 @@ export class IPAddress implements INetAddress {
     return Buffer.concat([bytes, IPAddress.encodeIPv4(this.ip), portBytes], 38);
   }
 
-  public deserialize (bytes: Buffer): (INetAddress | Buffer)[] {
+  public deserialize (bytes: Buffer): INetAddress {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
-    if (bytes.length <= 38) {
+    if (bytes.length != 38) {
       throw new Error('Malformed IPAddress');
     }
-
-    const leftovers = bytes.slice(80);
-    bytes = bytes.slice(0, 80);
 
     const time: bigint = bytes.readBigUInt64BE();
     const stream: number = bytes.readUInt32BE(8);
@@ -48,11 +45,7 @@ export class IPAddress implements INetAddress {
     const ip: string = IPAddress.decodeIPv4(bytes.slice(32, 36))
     const port: number =  bytes.readUInt16BE(36);
 
-    const result: (INetAddress | Buffer)[] = [
-      new IPAddress(stream, services, ip, port, time)
-    ];
-    leftovers.length && result.push(leftovers);
-    return result;
+    return new IPAddress(stream, services, ip, port, time);
   }
 
   private static encodeIPv4 (ip: string): Buffer {
@@ -104,26 +97,19 @@ export class I2PAddress implements INetAddress {
     return Buffer.concat([bytes, Buffer.from(this.destination, 'ascii')], 80);
   }
 
-  public deserialize (bytes: Buffer): (INetAddress | Buffer)[] {
+  public deserialize (bytes: Buffer): INetAddress {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
-    if (bytes.length <= 80) {
+    if (bytes.length != 80) {
       throw new Error('Malformed I2PAddress');
     }
-
-    const leftovers = bytes.slice(80);
-    bytes = bytes.slice(0, 80);
 
     const time: bigint = bytes.readBigUInt64BE();
     const stream: number = bytes.readUInt32BE(8);
     const services: bigint = bytes.readBigUInt64BE(12);
     const destination: string = bytes.slice(20).toString('ascii');
 
-    const result: (INetAddress | Buffer)[] = [
-      new I2PAddress(stream, services, destination, time)
-    ];
-    leftovers.length && result.push(leftovers);
-    return result;
+    return new I2PAddress(stream, services, destination, time);
   }
 }

@@ -41,7 +41,7 @@ export class EncryptedPayload implements IEncryptedPayload {
     ], this.length);
   }
 
-  public deserialize (bytes: Buffer): (IEncryptedPayload | Buffer)[] {
+  public deserialize (bytes: Buffer): IEncryptedPayload {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
@@ -59,16 +59,12 @@ export class EncryptedPayload implements IEncryptedPayload {
     const cipherText = bytes.slice(offset + yLength, bytes.length - 32);
     const hmac = bytes.slice(bytes.length - 32);
 
-    const payload = new EncryptedPayload(
+    return new EncryptedPayload(
       aesInitVector,
       xLength, yLength,
       xValue, yValue,
       cipherText, hmac,
       curveType
     );
-    const result: (IEncryptedPayload | Buffer)[] = [payload];
-    const leftovers = bytes.slice(payload.length);
-    leftovers.length && result.push(leftovers);
-    return result;
   }
 }

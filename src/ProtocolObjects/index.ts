@@ -6,7 +6,7 @@ export interface ISerializable {
 }
 
 export interface IDeserializable {
-  deserialize: (bytes: Buffer) => (ISerializable | Buffer)[];
+  deserialize: (bytes: Buffer) => ISerializable | (ISerializable | Buffer)[];
 }
 
 export interface IProtocolObject extends ISerializable, IDeserializable {
