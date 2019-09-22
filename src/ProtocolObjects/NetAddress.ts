@@ -35,7 +35,7 @@ export class IPAddress implements INetAddress {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
-    if (bytes.length < 38) {
+    if (bytes.length <= 38) {
       throw new Error('Malformed IPAddress');
     }
 
@@ -108,7 +108,7 @@ export class I2PAddress implements INetAddress {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
-    if (bytes.length < 80) {
+    if (bytes.length <= 80) {
       throw new Error('Malformed I2PAddress');
     }
 
