@@ -1,4 +1,5 @@
 export const MAGIC = 0xE9BEB4D9;
+export const CURVE_TYPE = 0x02CA;
 
 export interface ISerializable {
   serialize: () => Buffer;
@@ -19,3 +20,4 @@ export { IVarstr, Varstr } from './Varstr';
 export { IVarintList, VarintList } from './VarintList';
 export { INetAddress, IPAddress, I2PAddress } from './NetAddress';
 export { IInventoryVector, InventoryVector } from './InventoryVector';
+export { IEncryptedPayload, EncryptedPayload } from './EncryptedPayload';
