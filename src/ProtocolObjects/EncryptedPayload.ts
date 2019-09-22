@@ -59,12 +59,16 @@ export class EncryptedPayload implements IEncryptedPayload {
     const cipherText = bytes.slice(offset + yLength, bytes.length - 32);
     const hmac = bytes.slice(bytes.length - 32);
 
-    return [new EncryptedPayload(
+    const payload = new EncryptedPayload(
       aesInitVector,
       xLength, yLength,
       xValue, yValue,
       cipherText, hmac,
       curveType
-    )];
+    );
+    const result: (IEncryptedPayload | Buffer)[] = [payload];
+    const leftovers = bytes.slice(payload.length);
+    leftovers.length && result.push(leftovers);
+    return result;
   }
 }
