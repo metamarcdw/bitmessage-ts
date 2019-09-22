@@ -10,27 +10,15 @@ export interface INetAddress extends ISerializable, IDeserializable {
 }
 
 export class IPAddress implements INetAddress {
-  public time: bigint;
-  public stream: number;
-  public services: bigint;
-  public ip: string;
-  public port: number;
-
   public static deserialize = IPAddress.prototype.deserialize.bind(null);
 
   constructor (
-    stream: number,
-    services: bigint,
-    ip: string,
-    port: number,
-    time: bigint = BigInt(Date.now())
-  ) {
-    this.time = time;
-    this.stream = stream;
-    this.services = services;
-    this.ip = ip;
-    this.port = port;
-  }
+    public stream: number,
+    public services: bigint,
+    public ip: string,
+    public port: number,
+    public time: bigint = BigInt(Date.now())
+  ) {}
 
   public serialize (): Buffer {
     const bytes = Buffer.alloc(20);
@@ -99,25 +87,14 @@ export class IPAddress implements INetAddress {
 }
 
 export class I2PAddress implements INetAddress {
-  public time: bigint;
-  public stream: number;
-  public services: bigint;
-  public destination: string;
-  // bmmkyafw6os62qd7g6rhmuewgnbrcaa3eykyrnjyggjgzoo3gb7q.b32.i2p
-
   public static deserialize = I2PAddress.prototype.deserialize.bind(null);
 
   constructor (
-    stream: number,
-    services: bigint,
-    destination: string,
-    time: bigint = BigInt(Date.now())
-  ) {
-    this.time = time;
-    this.stream = stream;
-    this.services = services;
-    this.destination = destination;
-  }
+    public stream: number,
+    public services: bigint,
+    public destination: string, // bmmkyafw6os62qd7g6rhmuewgnbrcaa3eykyrnjyggjgzoo3gb7q.b32.i2p
+    public time: bigint = BigInt(Date.now())
+  ) {}
 
   public serialize (): Buffer {
     const bytes = Buffer.alloc(20);

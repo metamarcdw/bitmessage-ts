@@ -12,36 +12,18 @@ export interface IEncryptedPayload extends ISerializable, IDeserializable {
 }
 
 export class EncryptedPayload implements IEncryptedPayload {
-  public aesInitVector: Buffer;
-  public curveType: number;
-  public xLength: number;
-  public yLength: number;
-  public xValue: Buffer;
-  public yValue: Buffer;
-  public cipherText: Buffer;
-  public hmac: Buffer;
-
   public static deserialize = EncryptedPayload.prototype.deserialize.bind(null);
 
   constructor (
-    aesInitVector: Buffer,
-    xLength: number,
-    yLength: number,
-    xValue: Buffer,
-    yValue: Buffer,
-    cipherText: Buffer,
-    hmac: Buffer,
-    curveType: number = CURVE_TYPE
-  ) {
-    this.aesInitVector = aesInitVector;
-    this.curveType = curveType;
-    this.xLength = xLength;
-    this.yLength = yLength;
-    this.xValue = xValue;
-    this.yValue = yValue;
-    this.cipherText = cipherText;
-    this.hmac = hmac;
-  }
+    public aesInitVector: Buffer,
+    public xLength: number,
+    public yLength: number,
+    public xValue: Buffer,
+    public yValue: Buffer,
+    public cipherText: Buffer,
+    public hmac: Buffer,
+    public curveType: number = CURVE_TYPE
+  ) {}
 
   public get length () {
     return 54 + this.xLength + this.yLength + this.cipherText.length;
