@@ -10,6 +10,7 @@ export interface INetAddress extends ISerializable, IDeserializable {
 }
 
 export class IPAddress implements INetAddress {
+  public static SIZE = 38;
   public static deserialize = IPAddress.prototype.deserialize.bind(null);
 
   constructor (
@@ -28,14 +29,14 @@ export class IPAddress implements INetAddress {
 
     const portBytes = Buffer.alloc(2);
     portBytes.writeUInt16BE(this.port, 0);
-    return Buffer.concat([bytes, IPAddress.encodeIPv4(this.ip), portBytes], 38);
+    return Buffer.concat([bytes, IPAddress.encodeIPv4(this.ip), portBytes], IPAddress.SIZE);
   }
 
   public deserialize (bytes: Buffer): INetAddress {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
-    if (bytes.length !== 38) {
+    if (bytes.length !== IPAddress.SIZE) {
       throw new Error('Malformed IPAddress');
     }
 
@@ -80,6 +81,7 @@ export class IPAddress implements INetAddress {
 }
 
 export class I2PAddress implements INetAddress {
+  public static SIZE = 80;
   public static deserialize = I2PAddress.prototype.deserialize.bind(null);
 
   constructor (
@@ -94,14 +96,14 @@ export class I2PAddress implements INetAddress {
     bytes.writeBigUInt64BE(this.time);
     bytes.writeUInt32BE(this.stream, 8);
     bytes.writeBigUInt64BE(this.services, 12);
-    return Buffer.concat([bytes, Buffer.from(this.destination, 'ascii')], 80);
+    return Buffer.concat([bytes, Buffer.from(this.destination, 'ascii')], I2PAddress.SIZE);
   }
 
   public deserialize (bytes: Buffer): INetAddress {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
-    if (bytes.length !== 80) {
+    if (bytes.length !== I2PAddress.SIZE) {
       throw new Error('Malformed I2PAddress');
     }
 
