@@ -31,7 +31,7 @@ export class Varstr implements IVarstr {
     return Buffer.concat([headBuffer, this.body], this.length);
   }
 
-  public deserialize (bytes: Buffer): (IVarstr | Buffer)[] {
+  public deserialize (bytes: Buffer): [Varstr, Buffer] {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
@@ -43,11 +43,8 @@ export class Varstr implements IVarstr {
     const strLength = Number((lengthVarint as IVarint).value);
     const stringBytes = moreBytes as Buffer;
 
-    const result: (IVarstr | Buffer)[] = [
-      new Varstr(stringBytes.slice(0, strLength).toString())
-    ];
+    const varstr = new Varstr(stringBytes.slice(0, strLength).toString());
     const leftovers = stringBytes.slice(strLength);
-    leftovers.length && result.push(leftovers);
-    return result;
+    return [varstr, leftovers];
   }
 }

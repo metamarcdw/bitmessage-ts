@@ -6,7 +6,7 @@ export interface ISerializable {
 }
 
 export interface IDeserializable {
-  deserialize: (bytes: Buffer) => ISerializable | (ISerializable | Buffer)[];
+  deserialize: (bytes: Buffer) => ISerializable | [ISerializable, Buffer];
 }
 
 export interface IProtocolObject extends ISerializable, IDeserializable {
@@ -21,3 +21,4 @@ export { IVarintList, VarintList } from './VarintList';
 export { INetAddress, IPAddress, I2PAddress } from './NetAddress';
 export { IInventoryVector, InventoryVector } from './InventoryVector';
 export { IEncryptedPayload, EncryptedPayload } from './EncryptedPayload';
+export { IMessage, Message, Encodings, PubkeyFeatures } from './Message';

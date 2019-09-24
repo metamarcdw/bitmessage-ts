@@ -63,35 +63,36 @@ export class Varint implements IVarint {
     return Buffer.concat([headBuffer, this.body], this.length);
   }
 
-  public deserialize (bytes: Buffer): (IVarint | Buffer)[] {
+  public deserialize (bytes: Buffer): [Varint, Buffer] {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
 
     const firstByte = bytes[0];
-    const result: (IVarint | Buffer)[] = [];
+    let varint: Varint;
     let offset: number = 0;
 
     try {
       if (firstByte < 0xfd) {
-        result.push(new Varint(BigInt(firstByte)));
+        varint = new Varint(BigInt(firstByte));
         offset = 1;
       } else if (firstByte === 0xfd) {
-        result.push(new Varint(BigInt(bytes.readUInt16BE(1))));
+        varint = new Varint(BigInt(bytes.readUInt16BE(1)));
         offset = 3;
       } else if (firstByte === 0xfe) {
-        result.push(new Varint(BigInt(bytes.readUInt32BE(1))));
+        varint = new Varint(BigInt(bytes.readUInt32BE(1)));
         offset = 5;
       } else if (firstByte === 0xff) {
-        result.push(new Varint(bytes.readBigUInt64BE(1)));
+        varint = new Varint(bytes.readBigUInt64BE(1));
         offset = 9;
+      } else {
+        throw new Error('Error while deserializing Buffer');
       }
     } catch (err) {
       throw new Error('Error while deserializing Buffer');
     }
 
     const leftovers = bytes.slice(offset);
-    leftovers.length && result.push(leftovers);
-    return result;
+    return [varint, leftovers];
   }
 }

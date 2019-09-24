@@ -37,7 +37,7 @@ export class VarintList implements IVarintList {
     return Buffer.concat([headBuffer, bodyBuffer], this.length);
   }
 
-  public deserialize (bytes: Buffer): (IVarintList | Buffer)[] {
+  public deserialize (bytes: Buffer): [VarintList, Buffer] {
     if (this !== null) {
       throw new Error('deserialize() should only be called as a static method');
     }
@@ -59,10 +59,6 @@ export class VarintList implements IVarintList {
       listBytes = moreBytes as Buffer;
     }
     
-    const result: (IVarintList | Buffer)[] = [
-      new VarintList(list)
-    ];
-    listBytes.length && result.push(listBytes);
-    return result;
+    return [new VarintList(list), listBytes];
   }
 }
